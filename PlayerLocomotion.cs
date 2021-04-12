@@ -8,6 +8,7 @@ namespace Controls
     // controls the players movement
     public class PlayerLocomotion : MonoBehaviour
     {
+        private PlayerManager playerManager;
         private Transform cameraObject;
         private InputHandler inputHandler;
         private Vector3 moveDirection;
@@ -15,33 +16,38 @@ namespace Controls
         [HideInInspector] public Transform playerTransform;
         [HideInInspector] public PlayerAnimatorHandler animatorHandler;
 
+        [Header("Ground and Air detection")]
+        [SerializeField]
+        private float groundDetectionRayStartPoint = .5f;
+        [SerializeField]
+        private float minRequiredFallHeight = 1f;
+        [SerializeField]
+        private float groundDetectionRayDistance = .2f;
+        public float inAirTimer;
+
         public new Rigidbody rigidbody;
         public GameObject normalCamera;
 
-        [Header("Player Move Stats")]
+        [Header("Movement Stats")]
         [SerializeField] 
         private float movementSpeed = 5;
         [SerializeField] 
         private float rotationSpeed = 10;
+        [SerializeField]
+        private float fallSpeed = 45;
         
         // finds all the components and game objects relevant to the movement of the player
         void Start()
         {
+            playerManager = GetComponent<PlayerManager>();
             rigidbody = GetComponent<Rigidbody>();
             inputHandler = GetComponent<InputHandler>();
             cameraObject = Camera.main.transform;
             playerTransform = transform;
             animatorHandler = GetComponentInChildren<PlayerAnimatorHandler>();
             animatorHandler.Initialize();
-        }
 
-        // tells the player where to move according to the input
-        public void Update()
-        {
-            float delta = Time.deltaTime;
-            
-            inputHandler.TickInput(delta);
-            HandleMovement(delta);
+            playerManager.isGrounded = true;
         }
 
         // the actual code for moving the player
@@ -50,7 +56,7 @@ namespace Controls
         private Vector3 normalVector;
         private Vector3 targetPosition;
 
-        private void HandleMovement(float delta)
+        public void HandleMovement(float delta)
         {
             moveDirection = cameraObject.forward * inputHandler.vertical;
             moveDirection += cameraObject.right * inputHandler.horizontal;

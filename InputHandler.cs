@@ -15,31 +15,11 @@ namespace Controls
         public float mouseY;
 
         private PlayerControls inputActions;
-        private CameraHandler cameraHandler;
 
         private Vector2 movementInput;
         private Vector2 cameraInput;
-        private bool iscameraHandlerNotNull;
 
-        // finds the camera handler script so that the camera can be controller
-        private void Awake()
-        {
-            cameraHandler = CameraHandler.singleton;
-            iscameraHandlerNotNull = cameraHandler != null;
-        }
 
-        // follows the player and points at them
-        // since the camera can collide, it should be in FixedUpdate
-        private void FixedUpdate()
-        {
-            float delta = Time.fixedDeltaTime;
-
-            if (iscameraHandlerNotNull)
-            {
-                cameraHandler.FollowTarget(delta);
-                cameraHandler.HandleCameraRotation(delta, mouseX, mouseY);
-            }
-        }
 
         // enables input actions manager
         public void OnEnable()
