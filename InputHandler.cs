@@ -14,12 +14,20 @@ namespace Controls
         public float mouseX;
         public float mouseY;
 
+        public bool xInput;
+        
         private PlayerControls inputActions;
+        private PlayerManager playerManager;
+        private CheckSurroundings checkSurroundings;
 
         private Vector2 movementInput;
         private Vector2 cameraInput;
 
-
+        private void Awake()
+        {
+            checkSurroundings = GetComponent<CheckSurroundings>();
+            playerManager = GetComponent<PlayerManager>();
+        }
 
         // enables input actions manager
         public void OnEnable()
@@ -45,6 +53,7 @@ namespace Controls
         public void TickInput(float delta)
         {
             MoveInput(delta);
+            HandleInteractionInput(delta);
         }
 
         // gets input from the input actions manager
@@ -55,6 +64,18 @@ namespace Controls
             moveAmount = Mathf.Clamp01(Mathf.Abs(vertical) + Mathf.Abs(horizontal));
             mouseX = cameraInput.x;
             mouseY = cameraInput.y;
+        }
+
+        private void HandleInteractionInput(float delta)
+        {
+            xInput = inputActions.PlayerActions.Interact.phase == UnityEngine.InputSystem.InputActionPhase.Started;
+            if (xInput)
+            {
+                if (playerManager.canOpenChest)
+                {
+                    checkSurroundings.OpenChest();
+                }
+            }
         }
     }
 }

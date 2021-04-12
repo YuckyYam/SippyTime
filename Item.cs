@@ -8,5 +8,6 @@ namespace Controls
     {
         [Header("Item Info")] public Sprite itemIcon;
         public string itemName;
+        public bool isShield;
     }
 }

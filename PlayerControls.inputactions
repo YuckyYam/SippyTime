@@ -178,6 +178,55 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Player Actions",
+            "id": "45d187f9-80f7-4619-8ef2-42471c23e2ff",
+            "actions": [
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "285dd898-b0f5-45ce-8e7d-868cc6402687",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "02d78877-95c7-49c6-9ffa-49e84c4396c0",
+                    "path": "<Linux::PowerAProEx>/Y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "36de43f3-8b9d-4b76-b77e-7c96a9e04c3c",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f02c5b0a-6a2e-452b-88bc-b5675284ce08",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

@@ -17,12 +17,6 @@ namespace Controls
         [HideInInspector] public PlayerAnimatorHandler animatorHandler;
 
         [Header("Ground and Air detection")]
-        [SerializeField]
-        private float groundDetectionRayStartPoint = .5f;
-        [SerializeField]
-        private float minRequiredFallHeight = 1f;
-        [SerializeField]
-        private float groundDetectionRayDistance = .2f;
         public float inAirTimer;
 
         public new Rigidbody rigidbody;
@@ -33,9 +27,7 @@ namespace Controls
         private float movementSpeed = 5;
         [SerializeField] 
         private float rotationSpeed = 10;
-        [SerializeField]
-        private float fallSpeed = 45;
-        
+
         // finds all the components and game objects relevant to the movement of the player
         void Start()
         {

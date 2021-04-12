@@ -10,15 +10,17 @@ namespace Controls
     {
         // gets all the scripts
         private CameraHandler cameraHandler;
+        private CheckSurroundings checkSurroundings;
         private InputHandler inputHandler;
         private PlayerLocomotion playerLocomotion;
-        
+
         private Animator anim;
         private bool iscameraHandlerNotNull;
         
         public bool isInteracting;
 
         [Header("Player Flags")]
+        public bool canOpenChest;
         public bool isInAir;
         public bool isGrounded;
         
@@ -27,6 +29,7 @@ namespace Controls
         {
             inputHandler = GetComponent<InputHandler>();
             playerLocomotion = GetComponent<PlayerLocomotion>();
+            checkSurroundings = GetComponent<CheckSurroundings>();
             anim = GetComponentInChildren<Animator>();
 
             isInteracting = false;
@@ -62,15 +65,12 @@ namespace Controls
             float delta = Time.deltaTime;
             inputHandler.TickInput(delta);
             playerLocomotion.HandleMovement(delta);
+            
         }
 
         private void LateUpdate()
         {
-            float delta = Time.deltaTime;
-            if (isInAir)
-            {
-                playerLocomotion.inAirTimer += delta;
-            }
+            checkSurroundings.Check();
         }
     }
 }

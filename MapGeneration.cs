@@ -300,7 +300,9 @@ public class MapGeneration : MonoBehaviour
                             break;
                     }
                     
-                    PopulateRoom(currentChunk, currentRoomObject);
+                    // don't spawn enemies or chests in the start room
+                    if ((i != (int) Mathf.Floor(Height / 2)) || (j != (int) Mathf.Floor(Width / 2)))
+                        PopulateRoom(currentChunk, currentRoomObject);
                 }
             }
         }
@@ -424,18 +426,13 @@ public class MapGeneration : MonoBehaviour
         if (currentChunk.HasChest())
         {
             List<Transform> chestPositions = new List<Transform>();
-            List<Transform> enemyPositions = new List<Transform>();
+            
             if (currentRoomObject is { })
                 foreach (Transform child in currentRoomObject.transform)
                 {
                     if (child.CompareTag("ChestSpawn"))
                     {
                         chestPositions.Add(child);
-                    }
-
-                    if (child.CompareTag("EnemySpawn"))
-                    {
-                        enemyPositions.Add(child);
                     }
                 }
 
@@ -450,15 +447,28 @@ public class MapGeneration : MonoBehaviour
             {
                 Debug.Log("Room has nowhere to place chest");
             }
-            
-            // place enemies
-            int[] order = RandomOrder(currentRoomObject.GetComponent<RoomProperties>().MinEnemies, currentRoomObject.GetComponent<RoomProperties>().MaxEnemies);
-            if (order == null)
-                return;
-            foreach (var i in order)
+        }
+        // place enemies
+        List<Transform> enemyPositions = new List<Transform>();
+        foreach (Transform child in currentRoomObject.transform)
+        {
+            if (child.CompareTag("EnemySpawn"))
             {
-                //instantiate random enemy from list at enemyPositions[i].position;
+                enemyPositions.Add(child);
             }
+        }
+
+        int[] order = RandomOrder(currentRoomObject.GetComponent<RoomProperties>().MinEnemies,
+            currentRoomObject.GetComponent<RoomProperties>().MaxEnemies);
+        if (order == null)
+            return;
+        foreach (var i in order)
+        {
+            //instantiate random enemy from list at enemyPositions[i].position;
+            int randomEnemyIndex = Random.Range(0, EnemyPrefabs.Length);
+            Instantiate(EnemyPrefabs[randomEnemyIndex], enemyPositions[i].position + Vector3.up * 5,
+                Quaternion.Euler(-90 + enemyPositions[i].rotation.x,
+                    enemyPositions[i].rotation.y, enemyPositions[i].rotation.z));
         }
     }
 
