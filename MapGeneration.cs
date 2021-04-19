@@ -10,26 +10,26 @@ using UnityEngine;
 public class MapGeneration : MonoBehaviour
 {
     // Arrays of room prefabs to make the map with
-    public GameObject[] DeadEndRooms;
-    public GameObject[] ElbowRooms;
-    public GameObject[] HallwayRooms;
-    public GameObject[] TripleRooms;
-    public GameObject[] QuadRooms;
-    public GameObject[] BossRooms;
-    public GameObject ChestPrefab;
-    public GameObject[] EnemyPrefabs;
+    public GameObject[] deadEndRooms;
+    public GameObject[] elbowRooms;
+    public GameObject[] hallwayRooms;
+    public GameObject[] tripleRooms;
+    public GameObject[] quadRooms;
+    public GameObject[] bossRooms;
+    public GameObject chestPrefab;
+    public GameObject[] enemyPrefabs;
     
-    public int Height = 11;
-    public int Width = 11;
-    public int ChestNumber;
+    public int height = 11;
+    public int width = 11;
+    public int chestNumber;
 
     // The size of each chunk, in meters
-    public float RoomSize = 200;
+    public float roomSize = 50;
 
-    public int SnakeNum = 3;
-    public int SnakeMoves = 30;
-    public TurnTypeEnum TurnType = TurnTypeEnum.Equal;
-    public float TurnChance = 0.5f;
+    public int snakeNum = 3;
+    public int snakeMoves = 30;
+    public TurnTypeEnum turnType = TurnTypeEnum.Equal;
+    public float turnChance = 0.5f;
 
     Chunk[,] board;
     
@@ -43,10 +43,10 @@ public class MapGeneration : MonoBehaviour
     void DisplayDebugMap()
     {
         string output = "";
-        for (int i = 0; i < Height; i++)
+        for (int i = 0; i < height; i++)
         {
             output += i + ": ";
-            for (int j = 0; j < Width; j++)
+            for (int j = 0; j < width; j++)
             {
                 if (board[i, j].IsSet())
                     output += "+";
@@ -71,28 +71,28 @@ public class MapGeneration : MonoBehaviour
 
         //DisplayDebugMap();
         
-        // Goes through every chunk in the map and instantiates it in the engine
+        // Goes through every chunk in the board and instantiates it in the engine
         InstantiateRooms(board);
     }
 
     Chunk[,] GenerateBoard()
     {
         // Creates the board and sets the center of the map to be 1
-        board = new Chunk[Height, Width];
-        for (int i = 0; i < Height; i++)
+        board = new Chunk[height, width];
+        for (int i = 0; i < height; i++)
         {
-            for (int j = 0; j < Width; j++)
+            for (int j = 0; j < width; j++)
             {
                 board[i, j] = new Chunk();
             }
         }
 
-        int[] origin = {(int) Mathf.Floor(Height / 2), (int) Mathf.Floor(Width / 2)};
+        int[] origin = {(int) Mathf.Floor(height / 2), (int) Mathf.Floor(width / 2)};
         board[origin[0], origin[1]].Set();
 
         // Instantiate "snakes" that move around the board, creating rooms
-        int[,] snakes = new int[SnakeNum, 3];
-        for (int i = 0; i < SnakeNum; i++)
+        int[,] snakes = new int[snakeNum, 3];
+        for (int i = 0; i < snakeNum; i++)
         {
             // the three elements of the array are {x position, y position, direction}
             snakes[i, 0] = origin[0];
@@ -103,9 +103,9 @@ public class MapGeneration : MonoBehaviour
         List<Chunk> chunkList = new List<Chunk>();
 
         // Create the map layout by moving the "snakes"
-        for (int m = 0; m < SnakeMoves; m++)
+        for (int m = 0; m < snakeMoves; m++)
         {
-            for (int i = 0; i < SnakeNum; i++)
+            for (int i = 0; i < snakeNum; i++)
             {
                 int dir = snakes[i, 2];
                 int dx = 0, dy = 0;
@@ -130,7 +130,7 @@ public class MapGeneration : MonoBehaviour
                 }
 
                 // Moves the snake vertically if it is not going out of bounds
-                if ((0 <= snakes[i, 0] + dy) && (snakes[i, 0] + dy < Height))
+                if ((0 <= snakes[i, 0] + dy) && (snakes[i, 0] + dy < height))
                 {
                     board[snakes[i, 0], snakes[i, 1]].Connect(dy, 0);
                     snakes[i, 0] += dy;
@@ -138,7 +138,7 @@ public class MapGeneration : MonoBehaviour
                 }
 
                 // Moves the snake horizontally if it is not going out of bounds
-                if ((0 <= snakes[i, 1] + dx) && (snakes[i, 1] + dx < Width))
+                if ((0 <= snakes[i, 1] + dx) && (snakes[i, 1] + dx < width))
                 {
                     board[snakes[i, 0], snakes[i, 1]].Connect(0, dx);
                     snakes[i, 1] += dx;
@@ -152,7 +152,7 @@ public class MapGeneration : MonoBehaviour
                 }
 
                 // Turn snake after it has moved depending on the turn type
-                switch (TurnType)
+                switch (turnType)
                 {
                     case TurnTypeEnum.Equal:
                         snakes[i, 2] = (int) Mathf.Floor(Random.Range(0, 3.999f));
@@ -161,20 +161,20 @@ public class MapGeneration : MonoBehaviour
                         // it looks like there are some magic numbers here, but here is the explanation
                         // The 3f in the following line is there because there is a 3/N chance of turning,
                         // where N is 4 in Equal turn mode
-                        int r = (int) Mathf.Floor(Random.Range(0, (3f / TurnChance - .0001f)));
+                        int r = (int) Mathf.Floor(Random.Range(0, (3f / turnChance - .0001f)));
                         if (r >= 4)
                             break;
                         snakes[i, 2] = r;
                         break;
                     case TurnTypeEnum.ScrambleToStraight:
-                        if (m < SnakeMoves / 2)
+                        if (m < snakeMoves / 2)
                         {
                             snakes[i, 2] = (int) Mathf.Floor(Random.Range(0, (2.999f)));
                             break;
                         }
                         else
                         {
-                            int randDir = (int) Mathf.Floor(Random.Range(0, (3f / TurnChance - .0001f)));
+                            int randDir = (int) Mathf.Floor(Random.Range(0, (3f / turnChance - .0001f)));
                             if (randDir >= 4)
                                 break;
                             snakes[i, 2] = randDir;
@@ -228,7 +228,7 @@ public class MapGeneration : MonoBehaviour
         return chunks;
     }
 
-    // adds chests to ChestNumber amount of rooms and turns the first dead end into a boss room. returns true if it makes a boss room
+    // adds chests to chestNumber amount of rooms and turns the first dead end into a boss room. returns true if it makes a boss room
     bool SetChests(Chunk[] chunks)
     {
         var hasBossRoom = false;
@@ -241,7 +241,7 @@ public class MapGeneration : MonoBehaviour
         }
         
         var extraChests = 0;
-        for (int i = 0; i < ChestNumber + extraChests; i++)
+        for (int i = 0; i < chestNumber + extraChests; i++)
         {
             if ((chunks[i].GetRoomType() == RoomType.DeadEnd) && (!hasBossRoom))
             {
@@ -260,9 +260,9 @@ public class MapGeneration : MonoBehaviour
     // instantiates the rooms with enemies and chests
     void InstantiateRooms(Chunk[,] board)
     {
-        for (int i = 0; i < Height; i++)
+        for (int i = 0; i < height; i++)
         {
-            for (int j = 0; j < Width; j++)
+            for (int j = 0; j < width; j++)
             {
                 if (board[i, j].IsSet())
                 {
@@ -301,13 +301,14 @@ public class MapGeneration : MonoBehaviour
                     }
                     
                     // don't spawn enemies or chests in the start room
-                    if ((i != (int) Mathf.Floor(Height / 2)) || (j != (int) Mathf.Floor(Width / 2)))
+                    if ((i != (int) Mathf.Floor(height / 2)) || (j != (int) Mathf.Floor(width / 2)))
                         PopulateRoom(currentChunk, currentRoomObject);
                 }
             }
         }
     }
 
+    // creates a dead end room prefab with its own rotation requirements
     GameObject InstantiateDeadEnd(Chunk[,] board, int i, int j)
     {
         Chunk currentChunk = board[i, j];
@@ -325,13 +326,14 @@ public class MapGeneration : MonoBehaviour
             q = Quaternion.Euler(0, -90, 0);
 
         // randomly picks a room from one in the list given in the engine
-        int r = (int) Mathf.Floor(Random.Range(0, DeadEndRooms.Length - .001f));
+        int r = (int) Mathf.Floor(Random.Range(0, deadEndRooms.Length - .001f));
                             
         // rotates the room depending on its orientation in the editor
-        q *= Quaternion.Euler(0, DeadEndRooms[r].GetComponent<RoomProperties>().Rotation, 0);
-        return Instantiate(DeadEndRooms[r], new Vector3(RoomSize*(i-Width/2), 0, RoomSize*(j-Height/2)), q);
+        q *= Quaternion.Euler(0, deadEndRooms[r].GetComponent<RoomProperties>().Rotation, 0);
+        return Instantiate(deadEndRooms[r], new Vector3(roomSize*(i-width/2), 0, roomSize*(j-height/2)), q);
     }
 
+    // creates a elbow room prefab with its own rotation requirements
     GameObject InstantiateElbow(Chunk[,] board, int i, int j)
     {
         Chunk currentChunk = board[i, j];
@@ -346,11 +348,13 @@ public class MapGeneration : MonoBehaviour
             q = Quaternion.Euler(0, 180, 0);
         else //(currentChunk.HasRight())
             q = Quaternion.Euler(0, 0, 0);
-        int r = (int) Mathf.Floor(Random.Range(0, ElbowRooms.Length - .001f));
-        q *= Quaternion.Euler(0, ElbowRooms[r].GetComponent<RoomProperties>().Rotation, 0);
-        return Instantiate(ElbowRooms[r], new Vector3(RoomSize*(i-Width/2), 0, RoomSize*(j-Height/2)), q);
+        int r = (int) Mathf.Floor(Random.Range(0, elbowRooms.Length - .001f));
+        q *= Quaternion.Euler(0, elbowRooms[r].GetComponent<RoomProperties>().Rotation, 0);
+        return Instantiate(elbowRooms[r], new Vector3(roomSize*(i-width/2), 0, roomSize*(j-height/2)), q);
     }
     
+    
+    // creates a hallway room prefab with its own rotation requirements
     GameObject InstantiateHallway(Chunk[,] board, int i, int j)
     {
         Chunk currentChunk = board[i, j];
@@ -361,11 +365,13 @@ public class MapGeneration : MonoBehaviour
             q = Quaternion.Euler(0, 0, 0);
         else // (currentChunk.HasRight())
             q = Quaternion.Euler(0, 90, 0);
-        int r = (int) Mathf.Floor(Random.Range(0, HallwayRooms.Length - .001f));
-        q *= Quaternion.Euler(0, HallwayRooms[r].GetComponent<RoomProperties>().Rotation, 0);
-        return Instantiate(HallwayRooms[r], new Vector3(RoomSize*(i-Width/2), 0, RoomSize*(j-Height/2)), q);
+        int r = (int) Mathf.Floor(Random.Range(0, hallwayRooms.Length - .001f));
+        q *= Quaternion.Euler(0, hallwayRooms[r].GetComponent<RoomProperties>().Rotation, 0);
+        return Instantiate(hallwayRooms[r], new Vector3(roomSize*(i-width/2), 0, roomSize*(j-height/2)), q);
     }
     
+    
+    // creates a three-way intersection room prefab with its own rotation requirements
     GameObject InstantiateTriple(Chunk[,] board, int i, int j)
     {
         Chunk currentChunk = board[i, j];
@@ -380,21 +386,23 @@ public class MapGeneration : MonoBehaviour
             q = Quaternion.Euler(0, 90, 0);
         else //(!currentChunk.HasRight())
             q = Quaternion.Euler(0, -90, 0);
-        int r = (int) Mathf.Floor(Random.Range(0, TripleRooms.Length - .001f));
-        q *= Quaternion.Euler(0, TripleRooms[r].GetComponent<RoomProperties>().Rotation, 0);
-        return Instantiate(TripleRooms[r], new Vector3(RoomSize*(i-Width/2), 0, RoomSize*(j-Height/2)), q);
+        int r = (int) Mathf.Floor(Random.Range(0, tripleRooms.Length - .001f));
+        q *= Quaternion.Euler(0, tripleRooms[r].GetComponent<RoomProperties>().Rotation, 0);
+        return Instantiate(tripleRooms[r], new Vector3(roomSize*(i-width/2), 0, roomSize*(j-height/2)), q);
     }
     
+    // creates a quad room prefab without rotating it
     GameObject InstantiateQuad(Chunk[,] board, int i, int j)
     {
         Chunk currentChunk = board[i, j];
         RoomType roomType = currentChunk.GetRoomType();
         Quaternion q = Quaternion.identity;
 
-        int r = (int) Mathf.Floor(Random.Range(0, QuadRooms.Length - .001f));
-        return Instantiate(QuadRooms[r], new Vector3(RoomSize*(i-Width/2), 0, RoomSize*(j-Height/2)), Quaternion.identity);
+        int r = (int) Mathf.Floor(Random.Range(0, quadRooms.Length - .001f));
+        return Instantiate(quadRooms[r], new Vector3(roomSize*(i-width/2), 0, roomSize*(j-height/2)), Quaternion.identity);
     }
     
+    // creates a dead end boss room prefab with its own rotation requirements
     GameObject InstantiateBoss(Chunk[,] board, int i, int j)
     {
         Chunk currentChunk = board[i, j];
@@ -412,14 +420,14 @@ public class MapGeneration : MonoBehaviour
             q = Quaternion.Euler(0, -90, 0);
 
         // randomly picks a room from one in the list given in the engine
-        int r = (int) Mathf.Floor(Random.Range(0, DeadEndRooms.Length));
+        int r = (int) Mathf.Floor(Random.Range(0, deadEndRooms.Length));
                             
         // rotates the room depending on its orientation in the editor
-        q *= Quaternion.Euler(0, BossRooms[r].GetComponent<RoomProperties>().Rotation, 0);
-        return Instantiate(BossRooms[r], new Vector3(RoomSize*(i-Width/2), 0, RoomSize*(j-Height/2)), q);
+        q *= Quaternion.Euler(0, bossRooms[r].GetComponent<RoomProperties>().Rotation, 0);
+        return Instantiate(bossRooms[r], new Vector3(roomSize*(i-width/2), 0, roomSize*(j-height/2)), q);
     }
 
-    // Adds chests and enemies to the room
+    // Adds chests and enemies to the newly created room
     void PopulateRoom(Chunk currentChunk, GameObject currentRoomObject)
     {
         // adds chest to the room if it is supposed to be there
@@ -441,7 +449,7 @@ public class MapGeneration : MonoBehaviour
             {
                 int randomIndex = Random.Range(0, chestPositions.Count);
                 // the chest must be rotated according to how it was made in the editor (-90, 180, 0) and depending on which way it faces in the room and which way the room is facing
-                Instantiate(ChestPrefab, chestPositions[randomIndex].position, Quaternion.Euler(-90+chestPositions[randomIndex].rotation.x, chestPositions[randomIndex].rotation.y, chestPositions[randomIndex].rotation.z));
+                Instantiate(chestPrefab, chestPositions[randomIndex].position, Quaternion.Euler(-90+chestPositions[randomIndex].rotation.x, chestPositions[randomIndex].rotation.y, chestPositions[randomIndex].rotation.z));
             }
             else
             {
@@ -465,13 +473,14 @@ public class MapGeneration : MonoBehaviour
         foreach (var i in order)
         {
             //instantiate random enemy from list at enemyPositions[i].position;
-            int randomEnemyIndex = Random.Range(0, EnemyPrefabs.Length);
-            Instantiate(EnemyPrefabs[randomEnemyIndex], enemyPositions[i].position + Vector3.up * 5,
+            int randomEnemyIndex = Random.Range(0, enemyPrefabs.Length);
+            Instantiate(enemyPrefabs[randomEnemyIndex], enemyPositions[i].position + Vector3.up * 5,
                 Quaternion.Euler(-90 + enemyPositions[i].rotation.x,
                     enemyPositions[i].rotation.y, enemyPositions[i].rotation.z));
         }
     }
 
+    // creates a randomly ordered list of indeces to index another array
     int[] RandomOrder(int min, int max)
     {
         if (min > max)
@@ -501,13 +510,13 @@ public class MapGeneration : MonoBehaviour
         return output;
     }
 
-    // Update is called once per frame
+    // Update is called once per frame this is unneeded as the generation happens then stops immediately
     void Update()
     {
         
     }
 
-    // This class is a box in a grid to make the rooms fit together better
+    // This nested class is a box in a grid to make the rooms fit together better
     private class Chunk
     {
         private bool up;
@@ -626,7 +635,7 @@ public class MapGeneration : MonoBehaviour
 }
 
 /*
-     *  The TurnType determines how the maps are randomly generated
+     *  The turnType determines how the maps are randomly generated
      *  Equal: equally likely to go in any direction
      *  Straight: more likely to go straight. Equally likely for all other directions
      *  ScramleToStraight: more likely to turn at the beginning half, then more likely to go straight afterwards

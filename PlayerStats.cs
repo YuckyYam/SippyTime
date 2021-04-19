@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Controls
 {
 
-
+    // handles the players health and sippy count. would later be used for stamina
     public class PlayerStats : MonoBehaviour
     {
         public int sippyHealAmount = 3;
@@ -19,6 +19,7 @@ namespace Controls
 
         public HealthBar healthBar;
         
+        // instantiates all the values needed at the start of the game, like the amount of health and sippies
         void Start()
         {
             maxHealth = SetMaxHealthFromHealthLevel();
@@ -26,12 +27,14 @@ namespace Controls
             healthBar.SetMaxHealth(maxHealth);
         }
 
+        // sets a higher max health so that the slider changes more smoothly
         private int SetMaxHealthFromHealthLevel()
         {
             maxHealth = healthLevel * 10;
             return maxHealth;
         }
 
+        // reduces the amount of health the player has and updates the health bar
         public void TakeDamage(int damage)
         {
             currentHealth -= damage;
@@ -39,14 +42,17 @@ namespace Controls
             healthBar.SetCurrentHealth(currentHealth);
         }
 
+        // heals the player at the cost of a sippy
         public void DrinkSippy()
         {
+            // TODO have drinking animation call this when the animation is finished
             currentHealth += sippyHealAmount;
             sippyCount--;
             
             healthBar.SetCurrentHealth(currentHealth);
         }
 
+        // gives more sippies to the player when they pick some up
         public void AddSippies(int sippiesIn)
         {
             sippyCount += sippiesIn;
@@ -56,6 +62,7 @@ namespace Controls
             }
         }
 
+        // updates the gui every frame with the number of sippies
         private void OnGUI()
         {
             GUI.Box(new Rect(10, 60, 100, 50), new GUIContent(" " + sippyCount, sippyIcon));

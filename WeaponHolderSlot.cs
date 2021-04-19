@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Controls
 {
+    // this handles what the player actually has in their hand
     public class WeaponHolderSlot : MonoBehaviour
     {
         public Transform parentOverride;
@@ -12,6 +13,7 @@ namespace Controls
 
         public GameObject currentWeaponModel;
 
+        // removes the weapon model prefab from the player's hand by disabling it
         public void UnloadWeapon()
         {
             if (currentWeaponModel != null)
@@ -20,6 +22,7 @@ namespace Controls
             }
         }
 
+        // removes the weapon model prefab from the player's hand by unloading it
         public void UnloadWeaponAndDestroy()
         {
             if (currentWeaponModel != null)
@@ -28,6 +31,7 @@ namespace Controls
             }
         }
 
+        // puts the weapon model prefab into the player's hand
         public void LoadWeaponModel(WeaponItem weaponItem)
         {
             UnloadWeaponAndDestroy();

@@ -10,6 +10,8 @@ using Random = UnityEngine.Random;
 
 namespace Controls
 {
+    // This object is connected to the player and checks to see if there are objects nearby for the player to interact
+    // with, rather than every object having its own script to check for the player
     public class CheckSurroundings : MonoBehaviour
     {
         public GameObject openedChest;
@@ -29,17 +31,24 @@ namespace Controls
         public WeaponItem rightHandWeapons;
         public WeaponItem leftHandWeapons;
 
+        // instantiates properties to self
         private void Start()
         {
-            playerStats = GetComponent<PlayerStats>();
-            playerManager = GetComponent<PlayerManager>();
-            weaponSlotManager = GetComponentInChildren<WeaponSlotManager>();
-            playerInventory = GetComponent<PlayerInventory>();
             playerTransform = transform;
             // checking if an object is null is expensive for the CPU, so instead we check if it is the player instead
             currentChest = gameObject;
         }
 
+        // instantiates properties after the other components have been instantiated
+        private void Awake()
+        {
+            playerStats = GetComponent<PlayerStats>();
+            playerManager = GetComponent<PlayerManager>();
+            weaponSlotManager = GetComponentInChildren<WeaponSlotManager>();
+            playerInventory = GetComponent<PlayerInventory>();
+        }
+
+        // finds every object in a chestRadius distance from the player and determines if each is a player
         public void Check()
         {
             bool foundChest = false;
@@ -66,6 +75,7 @@ namespace Controls
             }
         }
 
+        // gets called when the player presses the interaction button next to a chest
         public void OpenChest()
         {
             // tells the input handler to not run this method until the player finds another chest
