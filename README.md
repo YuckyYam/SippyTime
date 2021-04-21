@@ -1,6 +1,15 @@
 # Sippy Time
 
-[TOC]
+- [Sippy Time](#sippy-time)
+    + [Description](#description)
+    + [Instructions](#instructions)
+      - [Technologies](#technologies)
+      - [Setup](#setup)
+    + [Code Organization](#code-organization)
+    + [3rd Party Library](#3rd-party-library)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 
 ### Description
 
