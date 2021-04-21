@@ -210,7 +210,7 @@ public class MapGeneration : MonoBehaviour
         if ((board[origin[0], origin[1]].GetRoomType() == RoomType.DeadEnd) ||
             (board[origin[0], origin[1]].GetRoomType() == RoomType.BossRoom))
             return null;
-
+        
         return board;
     }
 
@@ -243,6 +243,8 @@ public class MapGeneration : MonoBehaviour
         var extraChests = 0;
         for (int i = 0; i < chestNumber + extraChests; i++)
         {
+            if (i >= chunks.Length)
+                break;
             if ((chunks[i].GetRoomType() == RoomType.DeadEnd) && (!hasBossRoom))
             {
                 chunks[i].SetBoss();
